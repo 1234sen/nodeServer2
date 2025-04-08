@@ -43,13 +43,35 @@ if (process.env.NODE_ENV !== "development") {
 
 const app = express();
 app.use(session(sessionOptions));
+// "https://nilcode123456.netlify.app",
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "https://eatwhite-a5test.netlify.app",
+];
+
 app.use(
   cors({
     credentials: true,
-    origin: "https://eatwhite-a5test.netlify.app",//process.env.NETLIFY_URL || "http://localhost:5173",
-    exposedHeaders: ['set-cookie'] // 新增暴露set-cookie头
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    exposedHeaders: ["set-cookie"], // 新增暴露set-cookie头
   })
 );
+
+
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin: "https://eatwhite-a5test.netlify.app",//process.env.NETLIFY_URL || "http://localhost:5173",
+//     exposedHeaders: ['set-cookie'] // 新增暴露set-cookie头
+//   })
+// );
 
 
 app.use(express.json());
